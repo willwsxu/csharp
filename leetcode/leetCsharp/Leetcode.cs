@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Collections;
 
 namespace leetCsharp
 {
@@ -58,9 +59,29 @@ namespace leetCsharp
             return CombinationSum4Dp(nums, target);
         }
 
+        // 120. Triangle
+        public int MinimumTotal(IList<IList<int>> triangle, int level, int pos, IList<IList<int>> memo)
+        {
+            if (level == triangle.Count - 1)
+                return triangle[level][pos];
+            if (memo[level][pos] == Int32.MaxValue)
+            {
+                int left = MinimumTotal(triangle, level + 1, pos, memo);
+                int right = MinimumTotal(triangle, level + 1, pos + 1, memo);
+                memo[level][pos] = Math.Min(left, right) + triangle[level][pos];
+            }
+            return memo[level][pos];
+        }
         public int MinimumTotal(IList<IList<int>> triangle)
         {
-
+            IList<IList<int>> memo = new List<IList<int>>(triangle.Count); // fail if use List<List<int>>
+            for (int i = 0; i < triangle.Count; i++)
+            {
+                memo.Add(new List<int>(triangle.Count));
+                for (int j = 0; j < triangle.Count; j++)
+                    memo[i].Add(Int32.MaxValue);
+            }
+            return MinimumTotal(triangle, 0, 0, memo);
         }
 
         static void Main(string[] args)
