@@ -84,6 +84,37 @@ namespace leetCsharp
             return MinimumTotal(triangle, 0, 0, memo);
         }
 
+        // 416. Partition Equal Subset Sum, beat 98%, 132 ms vs java 22 ms
+        public bool CanPartition(int[] nums)
+        {
+            int sum = 0;
+            foreach (int n in nums)
+            {
+                sum += n;
+            }
+            if ( (sum & 1) > 0)
+                return false;
+            sum /= 2;
+            bool[] dp = new bool[sum + 1];
+            for (int i = 1; i < dp.Length; i++)
+                dp[i] = false;
+            dp[0] = true;
+            foreach (int n in nums)
+            {
+                if (sum>=n)
+                {
+                    dp[sum] = dp[sum] || dp[sum - n];
+                    if (dp[sum])
+                        return true;
+                }
+                for (int j = sum - 1; j > 0; j--)
+                {
+                    if (j >= n)
+                        dp[j] = dp[j] || dp[j - n];
+                }
+            }
+            return dp[sum];
+        }
         static void Main(string[] args)
         {
         }

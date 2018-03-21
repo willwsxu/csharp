@@ -1,9 +1,9 @@
 #include "stdafx.h"
 
-extern void testTrianglePath();
+extern void test();
 
 int main()
 {
-	testTrianglePath();
+	test();
 	return 0;
 }
