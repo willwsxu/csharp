@@ -115,6 +115,43 @@ namespace leetCsharp
             }
             return dp[sum];
         }
+
+        public bool canIWin(int maxChoosableInteger, int mask, int total, int desiredTotal, int fullmask, int[]dp)
+        {
+            if (total >= desiredTotal || mask == fullmask) // not allowed to pick any number
+                return false;
+            if (dp[mask] >= 0)
+                return dp[mask] > 0;
+            bool ans = false;
+            for (int i = 1; i <= maxChoosableInteger; i++)
+            {
+                int m = 1 << (i - 1);
+                if ((m & mask) > 0) // number is used
+                    continue;
+                if (!canIWin(maxChoosableInteger, mask | m, total + i, desiredTotal, fullmask, dp))
+                {
+                    ans = true; // you win when other player lose
+                    break;
+                }
+            }
+            dp[mask] = ans ? 1 : 0;
+            return ans;
+        }
+        public bool CanIWin(int maxChoosableInteger, int desiredTotal)
+        {
+            int sumAll = (1 + maxChoosableInteger) * maxChoosableInteger / 2;
+            if (sumAll < desiredTotal)
+                return false;
+            if (sumAll == desiredTotal)
+                return maxChoosableInteger % 2 > 0; // odd wins
+            if (desiredTotal <= maxChoosableInteger)  // win with 1 move
+                return true;
+            int fullmask = (1 << maxChoosableInteger) - 1;
+            int[]dp = new int[fullmask + 1];
+            for (int i = 0; i < dp.Length; i++)
+                dp[i] = -1;
+            return canIWin(maxChoosableInteger, 0, 0, desiredTotal, fullmask, dp);
+        }
         static void Main(string[] args)
         {
         }
