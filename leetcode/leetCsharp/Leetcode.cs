@@ -152,8 +152,44 @@ namespace leetCsharp
                 dp[i] = -1;
             return canIWin(maxChoosableInteger, 0, 0, desiredTotal, fullmask, dp);
         }
+
+        // There is an m by n grid with a ball.Given the start coordinate (i, j) of the ball, you can move the ball to adjacent cell or 
+        // cross the grid boundary in four directions(up, down, left, right). However, you can at most move N times.Find out the number 
+        // of paths to move the ball out of grid boundary.The answer may be very large, return it after mod 109 + 7.
+        // Once you move the ball out of boundary, you cannot move it back.
+        // The length and height of the grid is in range[1, 50].
+        // N is in range[0, 50].
+        public int FindPaths(int m, int n, int N, int i, int j)
+        {
+            int[,,] dp3 = new int[51, 50, 50];
+            const int MOD = 1000000007;
+            if (N < 0)
+                return 0;
+            for (int x=1; x<=N; x++)
+            {
+                for (int r=0; r<m; r++)
+                {
+                    for (int c=0; c<n; c++)
+                    {
+                        dp3[x, r, c] += r == 0 ? 1 : dp3[x - 1, r - 1, c];  // up !ERROR don't use i-- etc
+                        dp3[x, r, c] %= MOD;
+                        dp3[x, r, c] += r == m-1 ? 1 : dp3[x - 1, r + 1, c];  // down
+                        dp3[x, r, c] %= MOD;
+                        dp3[x, r, c] += c == 0 ? 1 : dp3[x - 1, r, c-1];  // left
+                        dp3[x, r, c] %= MOD;
+                        dp3[x, r, c] += c == n-1 ? 1 : dp3[x - 1, r, c + 1];  // left
+                        dp3[x, r, c] %= MOD;
+                    }
+                }
+
+            }
+            return dp3[N,i,j];
+        }
         static void Main(string[] args)
         {
+            Leetcode test = new Leetcode();
+            Console.Out.WriteLine(test.FindPaths(2, 2, 2, 0, 0));
+            Console.Out.WriteLine(test.FindPaths(1, 3, 3, 0, 1));
         }
     }
 }
