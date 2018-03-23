@@ -161,29 +161,31 @@ namespace leetCsharp
         // N is in range[0, 50].
         public int FindPaths(int m, int n, int N, int i, int j)
         {
-            int[,,] dp3 = new int[51, 50, 50];
+            // improve performance 100% by reduce memeory from [51,50,50]
+            int[,,] dp3 = new int[2, 50, 50];   // only need to keep previous N and current
             const int MOD = 1000000007;
-            if (N < 0)
-                return 0;
+            int prev = 0;
+            int current=0;
             for (int x=1; x<=N; x++)
             {
+                current = 1 - prev;
                 for (int r=0; r<m; r++)
                 {
                     for (int c=0; c<n; c++)
                     {
-                        dp3[x, r, c] += r == 0 ? 1 : dp3[x - 1, r - 1, c];  // up !ERROR don't use i-- etc
-                        dp3[x, r, c] %= MOD;
-                        dp3[x, r, c] += r == m-1 ? 1 : dp3[x - 1, r + 1, c];  // down
-                        dp3[x, r, c] %= MOD;
-                        dp3[x, r, c] += c == 0 ? 1 : dp3[x - 1, r, c-1];  // left
-                        dp3[x, r, c] %= MOD;
-                        dp3[x, r, c] += c == n-1 ? 1 : dp3[x - 1, r, c + 1];  // left
-                        dp3[x, r, c] %= MOD;
+                        dp3[current, r, c] = (r == 0 ? 1 : dp3[prev, r - 1, c]) % MOD;  // up !ERROR don't use i-- etc
+                        dp3[current, r, c] += r == m-1 ? 1 : dp3[prev, r + 1, c];  // down
+                        dp3[current, r, c] %= MOD;
+                        dp3[current, r, c] += c == 0 ? 1 : dp3[prev, r, c-1];  // left
+                        dp3[current, r, c] %= MOD;
+                        dp3[current, r, c] += c == n-1 ? 1 : dp3[prev, r, c + 1];  // left
+                        dp3[current, r, c] %= MOD;
                     }
                 }
-
+                prev = current; // swap
             }
-            return dp3[N,i,j];
+            //Console.Out.WriteLine("dp "+current+" prev="+ dp3[1-current, i, j]);
+            return dp3[current,i,j];
         }
         static void Main(string[] args)
         {
