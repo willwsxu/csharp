@@ -187,11 +187,48 @@ namespace leetCsharp
             //Console.Out.WriteLine("dp "+current+" prev="+ dp3[1-current, i, j]);
             return dp3[current,i,j];
         }
-        static void Main(string[] args)
+        static public void testOutBoundsPaths()
         {
             Leetcode test = new Leetcode();
             Console.Out.WriteLine(test.FindPaths(2, 2, 2, 0, 0));
             Console.Out.WriteLine(test.FindPaths(1, 3, 3, 0, 1));
+        }
+
+        bool dfs(int[] nums, int k, bool[] chosen, int subsetSum, int target, int setIdx, int numIdx)
+        {
+            if (k == 1 && target != 0 || k == 0)
+                return true;
+            if (subsetSum == target && setIdx > 0)  // setIdx>0 is used to support target=0
+                return dfs(nums, k - 1, chosen, 0, target, 0, 0);
+            for (int i = numIdx; i < nums.Length; i++)
+            {
+                if (chosen[i] || subsetSum + nums[i] > target)
+                    continue;
+                chosen[i] = true;
+                if (dfs(nums, k, chosen, subsetSum + nums[i], target, setIdx + 1, i + 1))
+                    return true;
+                chosen[i] = false;
+            }
+            return false;
+        }
+        public bool CanPartitionKSubsets(int[] nums, int k)
+        {
+            if (k == 1)
+                return true;
+            if (k < 1)
+                return false;
+            int sum = 0;
+            foreach (int n in nums)
+            {
+                sum += n;
+            }
+            if ((sum % k) > 0)
+                return false;
+            bool[] chosen = new bool[nums.Length];
+            return dfs(nums, k, chosen, 0, sum/k, 0, 0);
+        }
+        static void Main(string[] args)
+        {
         }
     }
 }
